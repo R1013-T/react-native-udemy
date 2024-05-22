@@ -27,7 +27,7 @@ export default function ListItem(props) {
     >
       <Text
         numberOfLines={3}
-        className="text-lg"
+        className="text-lg leading-5"
       >
         {props.title}
       </Text>
