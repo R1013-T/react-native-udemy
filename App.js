@@ -1,56 +1,60 @@
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { FlatList } from 'react-native';
-import ListItem from './components/list-item';
-import {
-  SafeAreaView,
-  SafeAreaProvider,
-} from 'react-native-safe-area-context';
-import { useEffect, useState } from 'react';
-import { NEWS_API_KEY } from '@env';
+import Home from './screens/HomeScreen';
+import ArticleScreen from './screens/ArticleScreen';
+import ClipScreen from './screens/ClipScreen';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const HomeStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Home"
+      component={Home}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Article"
+      component={ArticleScreen}
+    />
+  </Stack.Navigator>
+);
+
+const screenOptions = ({ route }) => ({
+  tabBarIcon: ({ focused, color, size }) => {
+    let iconName;
+
+    if (route.name === 'HomeTab') {
+      iconName = focused
+        ? 'home'
+        : 'home-outline';
+    } else if (route.name === 'ClipTab') {
+      iconName = focused
+        ? 'bookmark-sharp'
+        : 'bookmark-outline';
+    }
+    return <Ionicons name={iconName} size={size} color={color} />;
+  },
+});
 
 export default function App() {
-  const [newsItems, setNewsItems] = useState([]);
-
-  const URL = `https://newsapi.org/v2/top-headlines?country=jp&category=business&apiKey=${NEWS_API_KEY}`;
-
-  const fetchNews = async () => {
-    try {
-      const res = await fetch(URL)
-      const newsItems = await res.json()
-  
-      setNewsItems(newsItems.articles)
-    } catch (error) {
-      console.error('Error fetching news', error)
-    }
-  }
-
-
-  useEffect(() => {
-    fetchNews()
-  }, [])
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView
-        className="flex-1"
-        forceInset={{ top: 'never' }}
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={screenOptions}
       >
-        <FlatList
-          data={newsItems}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <ListItem
-              title={item.title}
-              author={item.author}
-              image={item.urlToImage}
-            />
-          )}
-          className="bg-gray-100"
-        />
-        <StatusBar
-          animated={true}
-        />
-      </SafeAreaView>
-    </SafeAreaProvider>
+        <Tab.Screen name="HomeTab" component={HomeStack} options={{ headerShown: false, title: "Home" }} />
+        <Tab.Screen name="ClipTab" component={ClipScreen} options={{ headerShown: false, title: "Clip" }} />
+      </Tab.Navigator>
+
+      <StatusBar
+        animated={true}
+      />
+    </NavigationContainer>
   );
 }

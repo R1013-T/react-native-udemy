@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 /**
  * ListItem component
@@ -7,12 +7,14 @@ import { Image, StyleSheet, Text, View } from "react-native";
  *  image: string,
  *  title: string,
  *  author: string,
+ *  onPress: () => void,
  * } props
  * 
  */
 export default function ListItem(props) {
-  return <View
+  return <TouchableOpacity
     className="flex-row mb-1.5"
+    onPress={props.onPress}
   >
     <Image
       style={{ width: 100, height: 100 }}
@@ -37,5 +39,5 @@ export default function ListItem(props) {
         {props.author}
       </Text>
     </View>
-  </View>;
+  </TouchableOpacity>;
 }
