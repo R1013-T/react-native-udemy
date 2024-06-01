@@ -6,6 +6,10 @@ import Home from './screens/HomeScreen';
 import ArticleScreen from './screens/ArticleScreen';
 import ClipScreen from './screens/ClipScreen';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { store, persistor } from './store'
+import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react'
+import { Text } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -15,6 +19,20 @@ const HomeStack = () => (
     <Stack.Screen
       name="Home"
       component={Home}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Article"
+      component={ArticleScreen}
+    />
+  </Stack.Navigator>
+);
+
+const ClipStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Clip"
+      component={ClipScreen}
       options={{ headerShown: false }}
     />
     <Stack.Screen
@@ -44,17 +62,20 @@ const screenOptions = ({ route }) => ({
 export default function App() {
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={screenOptions}
-      >
-        <Tab.Screen name="HomeTab" component={HomeStack} options={{ headerShown: false, title: "Home" }} />
-        <Tab.Screen name="ClipTab" component={ClipScreen} options={{ headerShown: false, title: "Clip" }} />
-      </Tab.Navigator>
-
-      <StatusBar
-        animated={true}
-      />
-    </NavigationContainer>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={screenOptions}
+          >
+            <Tab.Screen name="HomeTab" component={HomeStack} options={{ headerShown: false, title: "Home" }} />
+            <Tab.Screen name="ClipTab" component={ClipStack} options={{ headerShown: false, title: "Clip" }} />
+          </Tab.Navigator>
+          <StatusBar
+            animated={true}
+          />
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 }
